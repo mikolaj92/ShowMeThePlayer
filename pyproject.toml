@@ -1,0 +1,45 @@
+[project]
+name = "showmetheplayer"
+version = "0.1.0"
+description = "A Splot-based live camera director prototype for keeping one football player in view."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+  { name = "mikolaj92" }
+]
+dependencies = [
+  "splot>=0.1.0"
+]
+keywords = ["camera-director", "football", "splot", "video-routing"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+
+[project.scripts]
+showmetheplayer = "showmetheplayer.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/mikolaj92/ShowMeThePlayer"
+Repository = "https://github.com/mikolaj92/ShowMeThePlayer"
+Issues = "https://github.com/mikolaj92/ShowMeThePlayer/issues"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+showmetheplayer = ["profiles/player-director/*"]
+
+[tool.uv.sources]
+splot = { path = "../Splot", editable = true }
