@@ -1,0 +1,43 @@
+{
+  "paths": [
+    "pyproject.toml",
+    "src/showmetheplayer/director.py",
+    "src/showmetheplayer",
+    "README.md",
+    "src/showmetheplayer/profiles/player-director/profile.yaml",
+    "src/showmetheplayer/profiles/player-director",
+    "src/showmetheplayer/__init__.py",
+    "src/showmetheplayer/cli.py",
+    "src/showmetheplayer/profiles",
+    "tests/test_director.py",
+    "docs/ARCHITECTURE.md",
+    "docs/METRICS.md",
+    "tests/test_cli.py",
+    "docs",
+    "src",
+    "tests",
+    "CHANGELOG.md",
+    "director.py",
+    "cli.py"
+  ],
+  "source": "deterministic",
+  "seed_paths": [
+    "pyproject.toml",
+    "director.py",
+    "cli.py"
+  ],
+  "matched_tokens": [
+    "pyproject",
+    "README",
+    "director",
+    "ShowMeThePlayer"
+  ],
+  "notes": [
+    "Agentless-style localization: deterministic paths only (no embeddings).",
+    "Empty path list fails closed — run_agent must not start.",
+    "Repo tree entries considered: 22."
+  ],
+  "worktree": "/Users/mini-m4-main/.lokay/worktrees/mikolaj92__ShowMeThePlayer/ai__fix__7-uv.sources-pinuje-splot-na-splot-bez-ce23b5da",
+  "wrote": false,
+  "localize_rel": ".lokay/localize.json"
+}

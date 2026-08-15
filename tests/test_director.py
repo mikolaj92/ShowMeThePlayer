@@ -35,8 +35,10 @@ class DirectorTests(unittest.TestCase):
 
         self.assertEqual(result.decision.selected_candidate_id, "camera_3")
         self.assertEqual(switch["action"], "switch")
-        rejected = result.report.to_dict()["decision"]["rejected_candidates"]
-        self.assertTrue(any(item["candidate_id"] == "camera_2" for item in rejected))
+        evaluations = result.report.to_dict()["evaluations"]
+        self.assertTrue(
+            any(item["candidate_id"] == "camera_2" and not item.get("eligible", True) for item in evaluations)
+        )
 
 
 if __name__ == "__main__":
