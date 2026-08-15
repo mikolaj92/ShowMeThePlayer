@@ -26,6 +26,11 @@ classifiers = [
   "Typing :: Typed",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+]
+
 [project.scripts]
 showmetheplayer = "showmetheplayer.cli:main"
 
