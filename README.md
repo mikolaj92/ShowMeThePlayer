@@ -14,17 +14,13 @@ camera streams -> tracker metrics -> ShowMeThePlayer -> Splot -> switch command
 
 ## Quick Start
 
-For now, clone `Splot` next to this repository:
-
-```text
-OSS/
-  Splot/
-  ShowMeThePlayer/
-```
-
-`pyproject.toml` uses that sibling checkout through `tool.uv.sources`.
+Splot is pulled from GitHub (`splot-runtime` @ `v0.2.1`). No sibling clone is
+required — `uv sync` / `uv run` install it. PyPI's `splot` package is a
+different project and will not work here.
 
 ```bash
+uv sync
+
 uv run showmetheplayer decide \
   --input examples/metrics/round_1.json \
   --out decision_report.json \

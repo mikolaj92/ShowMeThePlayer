@@ -1,19 +1,19 @@
 version = 1
-revision = 2
-requires-python = ">=3.11"
+revision = 3
+requires-python = ">=3.12"
 
 [[package]]
 name = "showmetheplayer"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "splot" },
+    { name = "splot-runtime" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "splot", editable = "../Splot" }]
+requires-dist = [{ name = "splot-runtime", git = "https://github.com/mikolaj92/splot.git?rev=v0.2.1" }]
 
 [[package]]
-name = "splot"
-version = "0.1.0"
-source = { editable = "../Splot" }
+name = "splot-runtime"
+version = "0.2.1"
+source = { git = "https://github.com/mikolaj92/splot.git?rev=v0.2.1#3861c73ac5ad1668d1c496df4058b6b0f43a64c8" }
