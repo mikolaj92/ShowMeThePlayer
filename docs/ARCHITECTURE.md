@@ -5,7 +5,7 @@ ShowMeThePlayer is a host around Splot.
 ```text
 metrics JSON
   -> showmetheplayer.director.metrics_to_candidates
-  -> splot.run_round
+  -> splot.fuse_json
   -> decision report
   -> switch command
 ```

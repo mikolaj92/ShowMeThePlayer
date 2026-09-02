@@ -9,11 +9,9 @@ authors = [
   { name = "mikolaj92" }
 ]
 dependencies = [
-  # PyPI's `splot` is an unrelated PySAL package. mikolaj92/splot publishes as
-  # `splot-runtime` (import name stays `splot`). Pin the last Python runtime
-  # that exports run_round / RoundResult / builtin_registry. A path source
-  # would still require a sibling clone and would win over this dependency.
-  "splot-runtime @ git+https://github.com/mikolaj92/splot.git@v0.2.1",
+  # PyPI's `splot` is an unrelated PySAL package. Pin the immutable Mojo-backed
+  # mikolaj92/splot binding; no sibling checkout or floating branch is allowed.
+  "splot @ git+https://github.com/mikolaj92/splot.git@v0.4.1",
 ]
 keywords = ["camera-director", "football", "splot", "video-routing"]
 classifiers = [
@@ -48,3 +46,6 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 showmetheplayer = ["profiles/player-director/*"]
+
+[tool.lokay]
+test = "uv run --extra dev pytest -q"

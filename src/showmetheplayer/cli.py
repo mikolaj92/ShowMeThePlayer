@@ -5,8 +5,6 @@ import json
 import sys
 from pathlib import Path
 
-from splot import SplotState
-
 from .director import DEFAULT_PROFILE, build_switch_command, decide_from_payload
 
 
@@ -36,13 +34,13 @@ def _decide(args: argparse.Namespace) -> int:
     if args.state and Path(args.state).exists():
         payload["state"] = json.loads(Path(args.state).read_text(encoding="utf-8"))
     result = decide_from_payload(payload, profile=args.profile)
-    report = result.report.to_dict()
+    report = result
     switch = build_switch_command(result)
 
     if args.out:
         Path(args.out).write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
     if args.state:
-        Path(args.state).write_text(json.dumps(result.state.to_dict(), indent=2, sort_keys=True), encoding="utf-8")
+        Path(args.state).write_text(json.dumps(result.get("state") or {}, indent=2, sort_keys=True), encoding="utf-8")
     if args.switch_out:
         Path(args.switch_out).write_text(json.dumps(switch, indent=2, sort_keys=True), encoding="utf-8")
 

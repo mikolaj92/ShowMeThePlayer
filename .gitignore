@@ -7,3 +7,4 @@ __pycache__/
 decision_report.json
 state.json
 switch_command.json
+.lokay/

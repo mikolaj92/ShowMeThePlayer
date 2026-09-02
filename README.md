@@ -14,9 +14,10 @@ camera streams -> tracker metrics -> ShowMeThePlayer -> Splot -> switch command
 
 ## Quick Start
 
-Splot is pulled from GitHub (`splot-runtime` @ `v0.2.1`). No sibling clone is
-required — `uv sync` / `uv run` install it. PyPI's `splot` package is a
-different project and will not work here.
+Splot is pulled from its immutable GitHub tag `v0.4.1`. No sibling clone is
+required. Splot 0.4 is a thin binding to its Mojo engine, so the Modular Mojo
+toolchain must be available on `PATH` (or through the Splot build environment).
+PyPI's unrelated `splot` package will not work here.
 
 ```bash
 uv sync
@@ -27,7 +28,7 @@ uv run showmetheplayer decide \
   --state state.json \
   --switch-out switch_command.json
 
-uv run python -m unittest discover -s tests
+uv run --extra dev pytest -q
 ```
 
 The output report is a normal Splot decision report. `switch_command.json` is a
