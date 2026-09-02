@@ -5,7 +5,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -38,7 +37,8 @@ class CliTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("camera=", result.stdout)
-            self.assertEqual(json.loads(report.read_text())["profile_id"], "show_me_the_player_director")
+            decision = json.loads(report.read_text())["decision"]
+            self.assertEqual(decision["objective_id"], "best_player_view")
             self.assertIn(json.loads(switch.read_text())["action"], {"keep", "switch", "wait", "fallback"})
             self.assertTrue(state.exists())
 

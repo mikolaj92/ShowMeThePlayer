@@ -1,6 +1,11 @@
 import unittest
 
-from showmetheplayer import CameraMetric, build_switch_command, metric_to_candidate, run_director
+from showmetheplayer import (
+    CameraMetric,
+    build_switch_command,
+    metric_to_candidate,
+    run_director,
+)
 
 
 class DirectorTests(unittest.TestCase):
@@ -33,9 +38,9 @@ class DirectorTests(unittest.TestCase):
         )
         switch = build_switch_command(result)
 
-        self.assertEqual(result.decision.selected_candidate_id, "camera_3")
+        self.assertEqual(result["decision"]["selected_candidate_id"], "camera_3")
         self.assertEqual(switch["action"], "switch")
-        evaluations = result.report.to_dict()["evaluations"]
+        evaluations = result["evaluations"]
         self.assertTrue(
             any(item["candidate_id"] == "camera_2" and not item.get("eligible", True) for item in evaluations)
         )

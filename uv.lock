@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.12"
 
 [[package]]
@@ -68,7 +68,7 @@ name = "showmetheplayer"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "splot-runtime" },
+    { name = "splot" },
 ]
 
 [package.optional-dependencies]
@@ -79,11 +79,11 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
-    { name = "splot-runtime", git = "https://github.com/mikolaj92/splot.git?rev=v0.2.1" },
+    { name = "splot", git = "https://github.com/mikolaj92/splot.git?rev=v0.4.1" },
 ]
 provides-extras = ["dev"]
 
 [[package]]
-name = "splot-runtime"
-version = "0.2.1"
-source = { git = "https://github.com/mikolaj92/splot.git?rev=v0.2.1#3861c73ac5ad1668d1c496df4058b6b0f43a64c8" }
+name = "splot"
+version = "0.4.1"
+source = { git = "https://github.com/mikolaj92/splot.git?rev=v0.4.1#cb55319c7436b2de6e9e9b60b4b8d772814111ea" }

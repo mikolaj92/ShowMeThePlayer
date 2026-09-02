@@ -4,13 +4,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from splot import RoundResult, SplotState, builtin_registry, run_round
+from splot import fuse_json
+
+DEFAULT_PROFILE = Path(__file__).resolve().parent / "profiles" / "player-director" / "profile.toml"
 
 
-DEFAULT_PROFILE = Path(__file__).resolve().parent / "profiles" / "player-director"
-
-
-@dataclass
+@dataclass(frozen=True)
 class CameraMetric:
     camera_id: str
     player_visible: bool
@@ -24,7 +23,7 @@ class CameraMetric:
     observed_at: str | None = None
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "CameraMetric":
+    def from_dict(cls, data: dict[str, Any]) -> CameraMetric:
         return cls(
             camera_id=str(data["camera_id"]),
             player_visible=bool(data.get("player_visible", False)),
@@ -39,7 +38,9 @@ class CameraMetric:
         )
 
 
-def decide_from_payload(payload: dict[str, Any], *, profile: str | Path | None = None) -> RoundResult:
+def decide_from_payload(
+    payload: dict[str, Any], *, profile: str | Path | None = None
+) -> dict[str, Any]:
     metrics = [CameraMetric.from_dict(item) for item in payload.get("cameras") or []]
     return run_director(
         metrics,
@@ -52,26 +53,21 @@ def decide_from_payload(payload: dict[str, Any], *, profile: str | Path | None =
 def run_director(
     metrics: list[CameraMetric],
     *,
-    state: dict[str, Any] | SplotState | None = None,
+    state: dict[str, Any] | None = None,
     profile: str | Path | None = None,
     now: str | None = None,
-) -> RoundResult:
-    observations = [
-        {
-            "id": "camera_metrics",
-            "kind": "camera_metrics",
-            "observed_at": now,
-            "values": {"camera_count": len(metrics)},
-        }
-    ]
-    return run_round(
-        profile=profile or DEFAULT_PROFILE,
-        observations=observations,
-        candidates=metrics_to_candidates(metrics),
-        previous_state=state or {},
-        registry=builtin_registry(),
-        now=now,
-    )
+) -> dict[str, Any]:
+    if not metrics:
+        raise ValueError("at least one camera metric is required")
+    request: dict[str, Any] = {
+        "profile": str(Path(profile or DEFAULT_PROFILE).resolve()),
+        "candidates": metrics_to_candidates(metrics),
+        "state": state or {},
+        "include_evaluations": True,
+    }
+    if now is not None:
+        request["now"] = now
+    return fuse_json(request)
 
 
 def metrics_to_candidates(metrics: list[CameraMetric]) -> list[dict[str, Any]]:
@@ -86,7 +82,7 @@ def metric_to_candidate(metric: CameraMetric) -> dict[str, Any]:
         "source_ids": [metric.camera_id],
         "payload": {
             "player_visible": metric.player_visible,
-            "visibility": metric.visibility,
+            "visibility": metric.visibility if metric.player_visible else 0.0,
             "tracking_confidence": metric.tracking_confidence,
             "occlusion": metric.occlusion,
             "sharpness": metric.sharpness,
@@ -101,24 +97,27 @@ def metric_to_candidate(metric: CameraMetric) -> dict[str, Any]:
     }
 
 
-def build_switch_command(result: RoundResult) -> dict[str, Any]:
-    decision = result.decision
-    camera_id = decision.selected_candidate_id
-    if decision.status == "kept_previous" and camera_id:
+def build_switch_command(result: dict[str, Any]) -> dict[str, Any]:
+    decision = result.get("decision")
+    if not isinstance(decision, dict):
+        raise TypeError("Splot result is missing a decision object")
+    camera_id = decision.get("selected_candidate_id")
+    status = str(decision.get("status") or "")
+    if status == "kept_previous" and camera_id:
         action = "keep"
-    elif decision.status in {"selected", "routed"} and camera_id:
+    elif status in {"selected", "routed"} and camera_id:
         action = "switch"
-    elif decision.status == "fallback":
+    elif status == "fallback":
         action = "fallback"
     else:
         action = "wait"
     return {
         "action": action,
         "camera_id": camera_id,
-        "decision_id": decision.id,
-        "status": decision.status,
-        "confidence": decision.confidence,
-        "reason": decision.policy_reason,
+        "decision_id": decision.get("id"),
+        "status": status,
+        "confidence": float(decision.get("confidence") or 0),
+        "reason": decision.get("policy_reason"),
     }
 
 
