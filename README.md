@@ -43,11 +43,9 @@ Each camera metric is one candidate:
   "camera_id": "camera_3",
   "player_visible": true,
   "visibility": 0.91,
-  "tracking_confidence": 0.87,
   "occlusion": 0.12,
   "sharpness": 0.78,
   "face_angle": 0.64,
-  "latency_ms": 180,
   "available": true
 }
 ```

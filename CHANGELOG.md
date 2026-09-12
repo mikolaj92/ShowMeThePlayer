@@ -7,6 +7,9 @@
 - Migrate the director to Splot `fuse_json` and TOML-only profiles.
 - Add one canonical Lokay product gate and remove mill leftovers.
 - Add a `dev` extra so `uv run --extra dev pytest` can install pytest.
+- Align the metrics contract with the packed 0.4 profile: document and adapt
+  only fields Splot scores or the host uses as gates, and stop packing unused
+  `tracking_confidence` and `latency`.
 
 ## 0.1.0
 

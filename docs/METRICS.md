@@ -11,13 +11,12 @@ Required per camera:
 - `camera_id`
 - `player_visible`
 - `visibility`
-- `tracking_confidence`
 - `occlusion`
 - `sharpness`
 - `face_angle`
-- `latency_ms`
 - `available`
 
-Scores should already be normalized to `0..1`, except `latency_ms`. The adapter
-normalizes latency as `min(latency_ms / 1000, 1)`, and the Splot profile prefers
-lower latency.
+Scores should already be normalized to `0..1`. The adapter zeros `visibility`
+when `player_visible` is false. The packed Splot profile scores `visibility`,
+`face_angle`, `sharpness`, and `occlusion`, plus a keep-current bonus, and
+gates on `available` and a minimum visibility of `0.60`.

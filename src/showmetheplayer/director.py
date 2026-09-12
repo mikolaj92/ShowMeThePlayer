@@ -14,11 +14,9 @@ class CameraMetric:
     camera_id: str
     player_visible: bool
     visibility: float
-    tracking_confidence: float
     occlusion: float
     sharpness: float
     face_angle: float
-    latency_ms: int
     available: bool = True
     observed_at: str | None = None
 
@@ -28,11 +26,9 @@ class CameraMetric:
             camera_id=str(data["camera_id"]),
             player_visible=bool(data.get("player_visible", False)),
             visibility=_score(data.get("visibility", 0)),
-            tracking_confidence=_score(data.get("tracking_confidence", 0)),
             occlusion=_score(data.get("occlusion", 1)),
             sharpness=_score(data.get("sharpness", 0)),
             face_angle=_score(data.get("face_angle", 0)),
-            latency_ms=max(0, int(data.get("latency_ms", 1000))),
             available=bool(data.get("available", True)),
             observed_at=data.get("observed_at"),
         )
@@ -75,7 +71,6 @@ def metrics_to_candidates(metrics: list[CameraMetric]) -> list[dict[str, Any]]:
 
 
 def metric_to_candidate(metric: CameraMetric) -> dict[str, Any]:
-    latency = min(metric.latency_ms / 1000.0, 1.0)
     return {
         "id": metric.camera_id,
         "kind": "camera_view",
@@ -83,16 +78,13 @@ def metric_to_candidate(metric: CameraMetric) -> dict[str, Any]:
         "payload": {
             "player_visible": metric.player_visible,
             "visibility": metric.visibility if metric.player_visible else 0.0,
-            "tracking_confidence": metric.tracking_confidence,
             "occlusion": metric.occlusion,
             "sharpness": metric.sharpness,
             "face_angle": metric.face_angle,
-            "latency": latency,
             "available": metric.available,
         },
         "metadata": {
             "observed_at": metric.observed_at,
-            "latency_ms": metric.latency_ms,
         },
     }
 

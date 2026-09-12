@@ -16,13 +16,13 @@
     }
   },
   "cameras": [
-    {"camera_id": "camera_1", "player_visible": true, "visibility": 0.78, "tracking_confidence": 0.79, "occlusion": 0.12, "sharpness": 0.78, "face_angle": 0.65, "latency_ms": 160, "available": true},
-    {"camera_id": "camera_2", "player_visible": true, "visibility": 0.50, "tracking_confidence": 0.74, "occlusion": 0.18, "sharpness": 0.73, "face_angle": 0.80, "latency_ms": 170, "available": true},
-    {"camera_id": "camera_3", "player_visible": true, "visibility": 0.94, "tracking_confidence": 0.88, "occlusion": 0.05, "sharpness": 0.90, "face_angle": 0.82, "latency_ms": 190, "available": true},
-    {"camera_id": "camera_4", "player_visible": false, "visibility": 0.30, "tracking_confidence": 0.20, "occlusion": 0.60, "sharpness": 0.72, "face_angle": 0.20, "latency_ms": 150, "available": true},
-    {"camera_id": "camera_5", "player_visible": true, "visibility": 0.70, "tracking_confidence": 0.65, "occlusion": 0.22, "sharpness": 0.68, "face_angle": 0.74, "latency_ms": 210, "available": true},
-    {"camera_id": "camera_6", "player_visible": true, "visibility": 0.85, "tracking_confidence": 0.76, "occlusion": 0.15, "sharpness": 0.61, "face_angle": 0.58, "latency_ms": 260, "available": true},
-    {"camera_id": "camera_7", "player_visible": true, "visibility": 0.65, "tracking_confidence": 0.69, "occlusion": 0.30, "sharpness": 0.82, "face_angle": 0.71, "latency_ms": 140, "available": false},
-    {"camera_id": "camera_8", "player_visible": true, "visibility": 0.81, "tracking_confidence": 0.82, "occlusion": 0.10, "sharpness": 0.76, "face_angle": 0.68, "latency_ms": 180, "available": true}
+    {"camera_id": "camera_1", "player_visible": true, "visibility": 0.78, "occlusion": 0.12, "sharpness": 0.78, "face_angle": 0.65, "available": true},
+    {"camera_id": "camera_2", "player_visible": true, "visibility": 0.50, "occlusion": 0.18, "sharpness": 0.73, "face_angle": 0.80, "available": true},
+    {"camera_id": "camera_3", "player_visible": true, "visibility": 0.94, "occlusion": 0.05, "sharpness": 0.90, "face_angle": 0.82, "available": true},
+    {"camera_id": "camera_4", "player_visible": false, "visibility": 0.30, "occlusion": 0.60, "sharpness": 0.72, "face_angle": 0.20, "available": true},
+    {"camera_id": "camera_5", "player_visible": true, "visibility": 0.70, "occlusion": 0.22, "sharpness": 0.68, "face_angle": 0.74, "available": true},
+    {"camera_id": "camera_6", "player_visible": true, "visibility": 0.85, "occlusion": 0.15, "sharpness": 0.61, "face_angle": 0.58, "available": true},
+    {"camera_id": "camera_7", "player_visible": true, "visibility": 0.65, "occlusion": 0.30, "sharpness": 0.82, "face_angle": 0.71, "available": false},
+    {"camera_id": "camera_8", "player_visible": true, "visibility": 0.81, "occlusion": 0.10, "sharpness": 0.76, "face_angle": 0.68, "available": true}
   ]
 }
