@@ -37,6 +37,22 @@ class DirectorTests(unittest.TestCase):
         self.assertNotIn("latency", candidate["payload"])
         self.assertNotIn("latency_ms", candidate["metadata"])
 
+    def test_from_dict_requires_only_camera_id(self):
+        metric = CameraMetric.from_dict({"camera_id": "camera_1"})
+
+        self.assertEqual(metric.camera_id, "camera_1")
+        self.assertFalse(metric.player_visible)
+        self.assertEqual(metric.visibility, 0.0)
+        self.assertEqual(metric.occlusion, 1.0)
+        self.assertEqual(metric.sharpness, 0.0)
+        self.assertEqual(metric.face_angle, 0.0)
+        self.assertTrue(metric.available)
+        self.assertIsNone(metric.observed_at)
+
+    def test_from_dict_raises_without_camera_id(self):
+        with self.assertRaises(KeyError):
+            CameraMetric.from_dict({"player_visible": True})
+
     def test_from_dict_ignores_unscored_leftover_fields(self):
         candidate = metric_to_candidate(
             CameraMetric.from_dict(
