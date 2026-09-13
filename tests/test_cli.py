@@ -2,6 +2,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import tomllib
 import unittest
 from pathlib import Path
 
@@ -9,6 +10,22 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class CliTests(unittest.TestCase):
+    def test_quick_start_example_matches_packed_profile(self):
+        example = json.loads((ROOT / "examples/metrics/round_1.json").read_text())
+        profile = tomllib.loads(
+            (ROOT / "src/showmetheplayer/profiles/player-director/profile.toml").read_text()
+        )
+        objective_id = profile["objective"]["id"]
+
+        self.assertEqual(
+            [camera["camera_id"] for camera in example["cameras"]],
+            [wave["id"] for wave in profile["waves"]],
+        )
+        self.assertEqual(example["state"]["objective_id"], objective_id)
+        self.assertEqual(
+            example["state"]["previous_decision"]["objective_id"], objective_id
+        )
+
     def test_decide_writes_report_state_and_switch_command(self):
         with tempfile.TemporaryDirectory() as tmp:
             report = Path(tmp) / "decision_report.json"
