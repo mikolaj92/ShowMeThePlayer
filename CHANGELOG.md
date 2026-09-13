@@ -10,6 +10,8 @@
 - Align the metrics contract with the packed 0.4 profile: document and adapt
   only fields Splot scores or the host uses as gates, and stop packing unused
   `tracking_confidence` and `latency`.
+- Document that only `camera_id` is required per camera; other metric fields
+  have silent defaults in `CameraMetric.from_dict`.
 
 ## 0.1.0
 
