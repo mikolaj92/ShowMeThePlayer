@@ -25,6 +25,37 @@ class CliTests(unittest.TestCase):
         self.assertEqual(
             example["state"]["previous_decision"]["objective_id"], objective_id
         )
+        self.assertEqual(
+            example["state"]["previous_decision"]["selected_candidate_id"],
+            "camera_1",
+        )
+
+    def test_docs_show_stateful_keep_and_stateless_switch(self):
+        architecture = (ROOT / "docs/ARCHITECTURE.md").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+        stateful = (
+            "{\n"
+            '  "action": "switch",\n'
+            '  "camera_id": "camera_1",\n'
+            '  "status": "selected"\n'
+            "}"
+        )
+        stateless = (
+            "{\n"
+            '  "action": "switch",\n'
+            '  "camera_id": "camera_3",\n'
+            '  "status": "selected"\n'
+            "}"
+        )
+
+        self.assertIn(stateful, architecture)
+        self.assertIn(stateless, architecture)
+        self.assertIn("previous_decision", architecture)
+        self.assertIn("min_improvement", architecture)
+        self.assertIn("previous_decision", readme)
+        self.assertIn("camera_1", readme)
+        self.assertIn("camera_3", readme)
 
     def test_decide_writes_report_state_and_switch_command(self):
         with tempfile.TemporaryDirectory() as tmp:

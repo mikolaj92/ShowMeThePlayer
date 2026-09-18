@@ -6,6 +6,10 @@ The input file has:
 - `state`: optional previous Splot state
 - `cameras`: list of camera metrics
 
+When `state.previous_decision` names a live camera, Splot may keep it
+(hysteresis / keep-current). Without that field the director selects the
+highest eligible score and the host emits `action: switch`.
+
 Required per camera:
 
 - `camera_id`

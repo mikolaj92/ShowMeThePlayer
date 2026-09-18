@@ -12,6 +12,9 @@
   `tracking_confidence` and `latency`.
 - Document that only `camera_id` is required per camera; other metric fields
   have silent defaults in `CameraMetric.from_dict`.
+- Document the two switch-command paths: Quick Start with
+  `previous_decision` keeps `camera_1`; the same cameras without that field
+  switch to `camera_3`.
 
 ## 0.1.0
 
