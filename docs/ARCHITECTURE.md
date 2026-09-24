@@ -32,8 +32,8 @@ score margin over the current camera is too small, so Splot keeps
 ```
 
 The same cameras without `previous_decision` have no current camera to keep.
-Splot then selects the highest eligible score and the host emits a real
-switch to `camera_3`:
+Because at least one camera in this example is eligible, Splot selects the
+highest eligible score and the host emits a real switch to `camera_3`:
 
 ```json
 {
@@ -42,5 +42,10 @@ switch to `camera_3`:
   "status": "selected"
 }
 ```
+
+This stateless example does not guarantee a switch for every payload. If all
+cameras are unavailable or below the visibility threshold, the packed profile
+returns `fallback` and the host emits `action=fallback` instead; see
+[Metrics](METRICS.md).
 
 Real adapters can map this to OBS, vMix, ATEM, FFmpeg, or another router.

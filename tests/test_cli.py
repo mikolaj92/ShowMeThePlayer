@@ -32,6 +32,7 @@ class CliTests(unittest.TestCase):
 
     def test_docs_show_stateful_keep_and_stateless_switch(self):
         architecture = (ROOT / "docs/ARCHITECTURE.md").read_text(encoding="utf-8")
+        metrics = (ROOT / "docs/METRICS.md").read_text(encoding="utf-8")
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
         stateful = (
@@ -53,6 +54,10 @@ class CliTests(unittest.TestCase):
         self.assertIn(stateless, architecture)
         self.assertIn("previous_decision", architecture)
         self.assertIn("min_improvement", architecture)
+        self.assertIn("at least one camera in this example is eligible", architecture)
+        self.assertIn("action=fallback", architecture)
+        self.assertIn("at least one camera is", metrics)
+        self.assertIn("action: fallback", metrics)
         self.assertIn("previous_decision", readme)
         self.assertIn("camera_1", readme)
         self.assertIn("camera_3", readme)
