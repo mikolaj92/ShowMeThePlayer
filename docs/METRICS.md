@@ -7,8 +7,12 @@ The input file has:
 - `cameras`: list of camera metrics
 
 When `state.previous_decision` names a live camera, Splot may keep it
-(hysteresis / keep-current). Without that field the director selects the
-highest eligible score and the host emits `action: switch`.
+(hysteresis / keep-current). Without that field, when at least one camera is
+eligible, the director selects the highest eligible score and the host emits
+`action: switch`. If all cameras are unavailable or below the visibility
+threshold, the packed profile uses `when_constraints_block_all = "fallback"`,
+and the host emits `action: fallback` instead. This also applies when cameras
+supply only the required `camera_id`, since their visibility defaults to zero.
 
 Required per camera:
 
