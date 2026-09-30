@@ -1,11 +1,16 @@
+import json
 import unittest
+from pathlib import Path
 
 from showmetheplayer import (
     CameraMetric,
     build_switch_command,
+    decide_from_payload,
     metric_to_candidate,
     run_director,
 )
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class DirectorTests(unittest.TestCase):
@@ -105,6 +110,31 @@ class DirectorTests(unittest.TestCase):
         self.assertTrue(
             any(item["candidate_id"] == "camera_2" and not item.get("eligible", True) for item in evaluations)
         )
+
+    def test_quick_start_payload_keeps_camera_1_without_previous_decision_switches_camera_3(self):
+        payload = json.loads((ROOT / "examples/metrics/round_1.json").read_text(encoding="utf-8"))
+
+        with_state = decide_from_payload(payload)
+        with_state_switch = build_switch_command(with_state)
+        self.assertEqual(with_state["decision"]["selected_candidate_id"], "camera_1")
+        self.assertEqual(with_state_switch["camera_id"], "camera_1")
+        self.assertEqual(with_state_switch["action"], "switch")
+        self.assertEqual(with_state_switch["status"], "selected")
+
+        without_previous = {
+            "now": payload["now"],
+            "state": {
+                "session_id": payload["state"]["session_id"],
+                "objective_id": payload["state"]["objective_id"],
+            },
+            "cameras": payload["cameras"],
+        }
+        without_state = decide_from_payload(without_previous)
+        without_state_switch = build_switch_command(without_state)
+        self.assertEqual(without_state["decision"]["selected_candidate_id"], "camera_3")
+        self.assertEqual(without_state_switch["action"], "switch")
+        self.assertEqual(without_state_switch["camera_id"], "camera_3")
+        self.assertEqual(without_state_switch["status"], "selected")
 
 
 if __name__ == "__main__":

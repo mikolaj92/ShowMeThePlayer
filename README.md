@@ -34,6 +34,11 @@ uv run --extra dev pytest -q
 The output report is a normal Splot decision report. `switch_command.json` is a
 small dry-run command that an actual switcher adapter can consume later.
 
+`examples/metrics/round_1.json` already carries `state.previous_decision` for
+`camera_1`. Packed hysteresis (`min_improvement = 0.15`) keeps that camera:
+`switch camera=camera_1 status=selected`. The same cameras without
+`previous_decision` switch to `camera_3`.
+
 ## Metrics Contract
 
 Each camera metric is one candidate:
