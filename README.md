@@ -31,8 +31,10 @@ uv run showmetheplayer decide \
 uv run --extra dev pytest -q
 ```
 
-The output report is a normal Splot decision report. `switch_command.json` is a
-small dry-run command that an actual switcher adapter can consume later.
+The `--out` file contains the raw JSON envelope returned by Splot's `fuse_json`,
+including `decision`, `state`, and `evaluations` (requested by this host); it is
+not a generated decision report. `switch_command.json` is a small dry-run command
+that an actual switcher adapter can consume later.
 
 `examples/metrics/round_1.json` already carries `state.previous_decision` for
 `camera_1`. Packed hysteresis (`min_improvement = 0.15`) keeps that camera:
