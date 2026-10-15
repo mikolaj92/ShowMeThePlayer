@@ -31,13 +31,32 @@ uv run showmetheplayer decide \
 uv run --extra dev pytest -q
 ```
 
+### CLI flags
+
+| Flag | Meaning |
+| --- | --- |
+| `--input PATH` | Required input JSON file with camera metrics and optional state. |
+| `--profile PATH` | Splot profile TOML file; defaults to the bundled `src/showmetheplayer/profiles/player-director/profile.toml`. |
+| `--state PATH` | Optional JSON state file, read if it exists and written after a successful decision. |
+| `--out PATH` | Optional output file for the raw Splot result JSON. |
+| `--switch-out PATH` | Optional output file for the dry-run switch command JSON. |
+| `-h`, `--help` | Show help: `showmetheplayer --help` or `showmetheplayer decide --help`. |
+
+Without `--state`, the command uses the input JSON's `state` and does not write
+a separate state file. With `--state`, a missing file leaves the input state
+unchanged. An existing file replaces the input's entire `state`, even if the
+file contains `{}`. After successful decision processing, the specified file
+receives the new state, or `{}` if Splot returns no state.
+
 The `--out` file contains the raw JSON envelope returned by Splot's `fuse_json`,
 including `decision`, `state`, and `evaluations` (requested by this host); it is
 not a generated decision report. `switch_command.json` is a small dry-run command
 that an actual switcher adapter can consume later.
 
 `examples/metrics/round_1.json` already carries `state.previous_decision` for
-`camera_1`. Packed hysteresis (`min_improvement = 0.15`) keeps that camera:
+`camera_1`. On the first run above, if `state.json` does not exist, that input
+state is used; the next run reads the saved file instead. Packed hysteresis
+(`min_improvement = 0.15`) keeps that camera:
 `switch camera=camera_1 status=selected`. The same cameras without
 `previous_decision` switch to `camera_3`.
 
