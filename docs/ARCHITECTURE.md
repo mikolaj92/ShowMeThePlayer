@@ -38,9 +38,28 @@ score margin over the current camera is too small, so Splot keeps
 {
   "action": "switch",
   "camera_id": "camera_1",
-  "status": "selected"
+  "decision_id": "decision_mojo",
+  "status": "selected",
+  "confidence": 0.7959999999999998,
+  "reason": "tie_breaker_keep_current"
 }
 ```
+
+`build_switch_command` applies these rules in order:
+
+| Condition | `action` |
+| --- | --- |
+| `status=kept_previous` and nonempty `camera_id` | `keep` |
+| `status=selected` or `status=routed`, and nonempty `camera_id` | `switch` |
+| `status=fallback`, with or without a camera | `fallback` |
+| Otherwise | `wait` |
+
+From the report's `decision`, `camera_id` comes from `selected_candidate_id`,
+`decision_id` from `id`, and `reason` from `policy_reason`; each may be `null`.
+`confidence` is converted to a number with `float(value or 0)`, defaulting to
+`0.0` when missing, null, or empty. `status` is converted to text with
+`str(value or "")`, defaulting to `""` when missing, null, or empty. The statuses
+above are not a closed list.
 
 The same cameras without `previous_decision` have no current camera to keep.
 Because at least one camera in this example is eligible, Splot selects the
@@ -50,7 +69,10 @@ highest eligible score and the host emits a real switch to `camera_3`:
 {
   "action": "switch",
   "camera_id": "camera_3",
-  "status": "selected"
+  "decision_id": "decision_mojo",
+  "status": "selected",
+  "confidence": 0.8179999999999998,
+  "reason": "constrained_weighted_score_selected_highest_score"
 }
 ```
 

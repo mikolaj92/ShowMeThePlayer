@@ -39,14 +39,20 @@ class CliTests(unittest.TestCase):
             "{\n"
             '  "action": "switch",\n'
             '  "camera_id": "camera_1",\n'
-            '  "status": "selected"\n'
+            '  "decision_id": "decision_mojo",\n'
+            '  "status": "selected",\n'
+            '  "confidence": 0.7959999999999998,\n'
+            '  "reason": "tie_breaker_keep_current"\n'
             "}"
         )
         stateless = (
             "{\n"
             '  "action": "switch",\n'
             '  "camera_id": "camera_3",\n'
-            '  "status": "selected"\n'
+            '  "decision_id": "decision_mojo",\n'
+            '  "status": "selected",\n'
+            '  "confidence": 0.8179999999999998,\n'
+            '  "reason": "constrained_weighted_score_selected_highest_score"\n'
             "}"
         )
 
