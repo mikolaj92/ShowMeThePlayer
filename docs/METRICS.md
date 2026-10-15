@@ -3,8 +3,14 @@
 The input file has:
 
 - `now`: ISO timestamp
-- `state`: optional previous Splot state
+- `state`: optional previous Splot state; an existing CLI `--state` file replaces it
 - `cameras`: list of camera metrics
+
+Without `--state`, or if its file does not exist, the input's `state` is used.
+An existing file replaces that state entirely, including when it contains `{}`.
+After successful decision processing, the specified file receives the new state,
+or `{}` if Splot returns no state. Without the flag, no separate state file is
+written. See [CLI flags](../README.md#cli-flags) for the full CLI reference.
 
 When `state.previous_decision` names a live camera, Splot may keep it
 (hysteresis / keep-current). Without that field, when at least one camera is
