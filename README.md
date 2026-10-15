@@ -77,8 +77,10 @@ Each camera metric is one candidate:
 ```
 
 Splot handles scoring, constraints, keep-current behavior, hysteresis and
-cooldown. ShowMeThePlayer only converts camera metrics into Splot candidates
-and turns the decision into a switch command.
+cooldown. ShowMeThePlayer builds Splot candidates, forwards `player_visible`,
+sets candidate `visibility` to `0.0` when that flag is false, and turns the
+decision into a switch command. See the [metrics contract](docs/METRICS.md)
+for the profile's independent visibility threshold.
 
 ## Boundary
 
