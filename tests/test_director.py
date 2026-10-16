@@ -16,13 +16,15 @@ ROOT = Path(__file__).resolve().parents[1]
 class DirectorTests(unittest.TestCase):
     def test_metric_to_candidate_keeps_profile_fields(self):
         candidate = metric_to_candidate(
-            CameraMetric(
-                camera_id="camera_1",
-                player_visible=True,
-                visibility=0.8,
-                occlusion=0.1,
-                sharpness=0.7,
-                face_angle=0.6,
+            CameraMetric.from_dict(
+                {
+                    "camera_id": "camera_1",
+                    "player_visible": True,
+                    "visibility": 0.8,
+                    "occlusion": 0.1,
+                    "sharpness": 0.7,
+                    "face_angle": 0.6,
+                }
             )
         )
 
