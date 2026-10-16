@@ -37,7 +37,7 @@ class CliTests(unittest.TestCase):
 
         stateful = (
             "{\n"
-            '  "action": "keep",\n'
+            '  "action": "switch",\n'
             '  "camera_id": "camera_1",\n'
             '  "decision_id": "decision_mojo",\n'
             '  "status": "selected",\n'
@@ -99,7 +99,7 @@ class CliTests(unittest.TestCase):
             decision = json.loads(report.read_text())["decision"]
             self.assertEqual(decision["objective_id"], "best_player_view")
             command = json.loads(switch.read_text())
-            self.assertEqual(command["action"], "keep")
+            self.assertEqual(command["action"], "switch")
             self.assertEqual(command["camera_id"], "camera_1")
             self.assertTrue(state.exists())
 

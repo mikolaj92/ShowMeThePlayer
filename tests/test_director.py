@@ -118,7 +118,7 @@ class DirectorTests(unittest.TestCase):
         with_state_switch = build_switch_command(with_state)
         self.assertEqual(with_state["decision"]["selected_candidate_id"], "camera_1")
         self.assertEqual(with_state_switch["camera_id"], "camera_1")
-        self.assertEqual(with_state_switch["action"], "keep")
+        self.assertEqual(with_state_switch["action"], "switch")
         self.assertEqual(with_state_switch["status"], "selected")
 
         without_previous = {

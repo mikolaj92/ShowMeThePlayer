@@ -57,7 +57,7 @@ that an actual switcher adapter can consume later.
 `camera_1`. On the first run above, if `state.json` does not exist, that input
 state is used; the next run reads the saved file instead. Packed hysteresis
 (`min_improvement = 0.15`) keeps that camera:
-`keep camera=camera_1 status=selected`. The same cameras without
+`switch camera=camera_1 status=selected`. The same cameras without
 `previous_decision` switch to `camera_3`.
 
 ## Metrics Contract
