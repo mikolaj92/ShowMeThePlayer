@@ -34,11 +34,10 @@ def _decide(args: argparse.Namespace) -> int:
     if args.state and Path(args.state).exists():
         payload["state"] = json.loads(Path(args.state).read_text(encoding="utf-8"))
     result = decide_from_payload(payload, profile=args.profile)
-    report = result
     switch = build_switch_command(result)
 
     if args.out:
-        Path(args.out).write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+        Path(args.out).write_text(json.dumps(result, indent=2, sort_keys=True), encoding="utf-8")
     if args.state:
         Path(args.state).write_text(json.dumps(result.get("state") or {}, indent=2, sort_keys=True), encoding="utf-8")
     if args.switch_out:

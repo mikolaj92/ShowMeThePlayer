@@ -31,6 +31,8 @@ uv run showmetheplayer decide \
 uv run --extra dev pytest -q
 ```
 
+With a fresh state file, Quick Start emits `action=switch`, `camera_id=camera_1`, and `status=selected`.
+
 ### CLI flags
 
 | Flag | Meaning |
