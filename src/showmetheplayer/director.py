@@ -95,7 +95,10 @@ def build_switch_command(result: dict[str, Any]) -> dict[str, Any]:
         raise TypeError("Splot result is missing a decision object")
     camera_id = decision.get("selected_candidate_id")
     status = str(decision.get("status") or "")
-    if status == "kept_previous" and camera_id:
+    if camera_id and (
+        status == "kept_previous"
+        or (status == "selected" and decision.get("policy_reason") == "tie_breaker_keep_current")
+    ):
         action = "keep"
     elif status in {"selected", "routed"} and camera_id:
         action = "switch"

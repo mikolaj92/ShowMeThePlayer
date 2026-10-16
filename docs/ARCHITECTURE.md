@@ -31,12 +31,12 @@ Quick Start uses `examples/metrics/round_1.json`. That file sets
 `state.previous_decision.selected_candidate_id` to `camera_1`. Packed
 hysteresis is `min_improvement = 0.15` with `close_margin = 0.05`; camera_3's
 score margin over the current camera is too small, so Splot keeps
-`camera_1` (`tie_breaker_keep_current`). The host maps Splot
-`status=selected` to `action=switch` (`kept_previous` would map to `keep`):
+`camera_1` (`tie_breaker_keep_current`). For this Quick Start result, the host
+maps `status=selected` with that reason to `action=keep`:
 
 ```json
 {
-  "action": "switch",
+  "action": "keep",
   "camera_id": "camera_1",
   "decision_id": "decision_mojo",
   "status": "selected",
@@ -50,6 +50,7 @@ score margin over the current camera is too small, so Splot keeps
 | Condition | `action` |
 | --- | --- |
 | `status=kept_previous` and nonempty `camera_id` | `keep` |
+| `status=selected`, `policy_reason=tie_breaker_keep_current`, and nonempty `camera_id` | `keep` |
 | `status=selected` or `status=routed`, and nonempty `camera_id` | `switch` |
 | `status=fallback`, with or without a camera | `fallback` |
 | Otherwise | `wait` |
