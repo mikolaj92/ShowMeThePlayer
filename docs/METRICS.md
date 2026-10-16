@@ -38,7 +38,13 @@ Every other camera field is optional and filled with a silent default:
 A camera that only has `camera_id` is therefore treated as live
 (`available=true`) with no player in view and full occlusion.
 
-Scores should already be normalized to `0..1`. The adapter zeros `visibility`
-when `player_visible` is false. The packed Splot profile scores `visibility`,
-`face_angle`, `sharpness`, and `occlusion`, plus a keep-current bonus, and
-gates on `available` and a minimum visibility of `0.60`.
+Scores should already be normalized to `0..1`. The host forwards `player_visible`
+in the candidate payload, but the packed profile does not check that flag directly.
+Candidate `visibility` equals the input value when `player_visible=true`;
+when `player_visible=false`, the host sends `0.0` instead.
+
+The packed Splot profile scores `visibility`, `face_angle`, `sharpness`, and
+`occlusion`, plus a keep-current bonus, and gates on `available` and the independent
+constraint `player_must_be_visible`: candidate `visibility >= 0.60`.
+Thus `true/0.50` fails this threshold, `false/1.00` becomes `0.0` and fails,
+and `true/0.60` passes this threshold alone. The flag being true is not sufficient.
