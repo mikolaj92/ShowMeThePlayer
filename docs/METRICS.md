@@ -6,6 +6,8 @@ The input file has:
 - `state`: optional previous Splot state; an existing CLI `--state` file replaces it
 - `cameras`: list of camera metrics
 
+`cameras` must be nonempty; a missing or empty list raises `ValueError` with the message `at least one camera metric is required`.
+
 Without `--state`, or if its file does not exist, the input's `state` is used.
 An existing file replaces that state entirely, including when it contains `{}`.
 After successful decision processing, the specified file receives the new state,
