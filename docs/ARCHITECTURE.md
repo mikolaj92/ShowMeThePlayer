@@ -46,18 +46,11 @@ score margin over the current camera is too small, so Splot keeps
 ```
 
 `build_switch_command` requires a dictionary at `result["decision"]`; a missing,
-null, or non-dictionary value raises `TypeError`. A nonempty
+null, or non-dictionary value raises `TypeError`. A truthy
 `selected_candidate_id` is required for `keep` (`kept_previous`) and `switch`
-(`selected` or `routed`); without it, these statuses produce `wait`. `fallback`
-produces `fallback` with or without an identifier; unknown statuses produce
-`wait`. The rules apply in order:
-
-| Condition | `action` |
-| --- | --- |
-| `status=kept_previous` and nonempty `camera_id` | `keep` |
-| `status=selected` or `status=routed`, and nonempty `camera_id` | `switch` |
-| `status=fallback`, with or without a camera | `fallback` |
-| Otherwise | `wait` |
+(`selected` or `routed`); otherwise, these statuses produce `wait`. `fallback`
+produces `fallback` with or without an identifier; all other statuses produce
+`wait`.
 
 From the report's `decision`, `camera_id` comes from `selected_candidate_id`,
 `decision_id` from `id`, and `reason` from `policy_reason`; each may be `null`.
