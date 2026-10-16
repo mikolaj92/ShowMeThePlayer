@@ -6,6 +6,8 @@ import tomllib
 import unittest
 from pathlib import Path
 
+from showmetheplayer import decide_from_payload
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -69,6 +71,33 @@ class CliTests(unittest.TestCase):
         self.assertIn("camera_3", readme)
 
     def test_decide_writes_report_state_and_switch_command(self):
+        payload = json.loads((ROOT / "examples/metrics/round_1.json").read_text())
+        first = decide_from_payload(payload)
+        self.assertEqual(first["decision"]["selected_candidate_id"], "camera_1")
+        self.assertEqual(first["state"]["last_decision_at"], payload["now"])
+
+        payload = {
+            **payload,
+            "state": first["state"],
+            "now": "2026-06-28T12:00:05+00:00",
+        }
+        stateful = decide_from_payload(payload)
+        self.assertEqual(stateful["decision"]["selected_candidate_id"], "camera_1")
+        self.assertEqual(stateful["state"]["last_decision_at"], payload["now"])
+        self.assertEqual(
+            stateful["state"]["last_switch_at"], first["state"]["last_switch_at"]
+        )
+        stateless = decide_from_payload({**payload, "state": {}})
+        self.assertEqual(stateless["decision"]["selected_candidate_id"], "camera_3")
+        self.assertEqual(stateless["state"]["last_switch_at"], payload["now"])
+
+        for invalid_payload in ({}, {"cameras": []}):
+            with self.subTest(payload=invalid_payload):
+                with self.assertRaisesRegex(
+                    ValueError, "^at least one camera metric is required$"
+                ):
+                    decide_from_payload(invalid_payload)
+
         with tempfile.TemporaryDirectory() as tmp:
             report = Path(tmp) / "decision_report.json"
             state = Path(tmp) / "state.json"
