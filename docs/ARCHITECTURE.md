@@ -45,7 +45,12 @@ score margin over the current camera is too small, so Splot keeps
 }
 ```
 
-`build_switch_command` applies these rules in order:
+`build_switch_command` requires a dictionary at `result["decision"]`; a missing,
+null, or non-dictionary value raises `TypeError`. A nonempty
+`selected_candidate_id` is required for `keep` (`kept_previous`) and `switch`
+(`selected` or `routed`); without it, these statuses produce `wait`. `fallback`
+produces `fallback` with or without an identifier; unknown statuses produce
+`wait`. The rules apply in order:
 
 | Condition | `action` |
 | --- | --- |
