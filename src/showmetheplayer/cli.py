@@ -23,7 +23,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "decide":
             return _decide(args)
-    except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     return 0
