@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import DEFAULT_PROFILE, build_switch_command, decide_from_payload
+from .director import DEFAULT_PROFILE, build_switch_command, decide_from_payload
 
 
 def main(argv: list[str] | None = None) -> int:
