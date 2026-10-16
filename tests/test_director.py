@@ -59,21 +59,34 @@ class DirectorTests(unittest.TestCase):
             CameraMetric.from_dict({"player_visible": True})
 
     def test_from_dict_ignores_unscored_leftover_fields(self):
-        candidate = metric_to_candidate(
-            CameraMetric.from_dict(
-                {
-                    "camera_id": "camera_1",
-                    "player_visible": True,
-                    "visibility": 0.8,
-                    "occlusion": 0.1,
-                    "sharpness": 0.7,
-                    "face_angle": 0.6,
-                    "available": True,
-                    "tracking_confidence": 0.9,
-                    "latency_ms": 250,
-                }
-            )
+        metric = CameraMetric.from_dict(
+            {
+                "camera_id": "camera_1",
+                "player_visible": True,
+                "visibility": 0.8,
+                "occlusion": 0.1,
+                "sharpness": 0.7,
+                "face_angle": 0.6,
+                "available": False,
+                "observed_at": "2026-06-28T12:00:04+00:00",
+                "tracking_confidence": 0.9,
+                "latency_ms": 250,
+            }
         )
+        self.assertEqual(
+            metric,
+            CameraMetric(
+                camera_id="camera_1",
+                player_visible=True,
+                visibility=0.8,
+                occlusion=0.1,
+                sharpness=0.7,
+                face_angle=0.6,
+                available=False,
+                observed_at="2026-06-28T12:00:04+00:00",
+            ),
+        )
+        candidate = metric_to_candidate(metric)
 
         self.assertNotIn("tracking_confidence", candidate["payload"])
         self.assertNotIn("latency", candidate["payload"])
