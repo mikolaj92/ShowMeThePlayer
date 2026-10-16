@@ -25,10 +25,10 @@ class CameraMetric:
         return cls(
             camera_id=str(data["camera_id"]),
             player_visible=bool(data.get("player_visible", False)),
-            visibility=_score(data.get("visibility", 0)),
-            occlusion=_score(data.get("occlusion", 1)),
-            sharpness=_score(data.get("sharpness", 0)),
-            face_angle=_score(data.get("face_angle", 0)),
+            visibility=_score(data.get("visibility", 0.0)),
+            occlusion=_score(data.get("occlusion", 1.0)),
+            sharpness=_score(data.get("sharpness", 0.0)),
+            face_angle=_score(data.get("face_angle", 0.0)),
             available=bool(data.get("available", True)),
             observed_at=data.get("observed_at"),
         )
