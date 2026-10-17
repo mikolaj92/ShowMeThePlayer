@@ -35,6 +35,10 @@ Every other camera field is optional and filled with a silent default:
 - `available`: `true`
 - `observed_at`: `null`
 
+`player_visible` and `available` accept only JSON booleans (`true` or `false`).
+Other values, including strings, numbers, and `null`, raise `TypeError` naming
+the field. Missing flags default to `player_visible=false` and `available=true`.
+
 A camera that only has `camera_id` is therefore treated as live
 (`available=true`) with no player in view and full occlusion.
 
