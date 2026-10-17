@@ -22,14 +22,19 @@ class CameraMetric:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> CameraMetric:
+        player_visible = data.get("player_visible", False)
+        available = data.get("available", True)
+        for field, value in (("player_visible", player_visible), ("available", available)):
+            if not isinstance(value, bool):
+                raise TypeError(f"{field} must be a bool")
         return cls(
             camera_id=str(data["camera_id"]),
-            player_visible=bool(data.get("player_visible", False)),
+            player_visible=player_visible,
             visibility=_score(data.get("visibility", 0)),
             occlusion=_score(data.get("occlusion", 1)),
             sharpness=_score(data.get("sharpness", 0)),
             face_angle=_score(data.get("face_angle", 0)),
-            available=bool(data.get("available", True)),
+            available=available,
             observed_at=data.get("observed_at"),
         )
 
