@@ -87,16 +87,33 @@ class CliTests(unittest.TestCase):
         self.assertEqual(
             stateful["state"]["last_switch_at"], first["state"]["last_switch_at"]
         )
-        stateless = decide_from_payload({**payload, "state": {}})
+        stateless = decide_from_payload(
+            {key: value for key, value in payload.items() if key != "state"}
+        )
         self.assertEqual(stateless["decision"]["selected_candidate_id"], "camera_3")
         self.assertEqual(stateless["state"]["last_switch_at"], payload["now"])
 
+        later_payload = {**payload, "now": "2026-06-28T12:00:10+00:00"}
+        later = decide_from_payload(later_payload)
+        self.assertEqual(later["state"]["last_decision_at"], later_payload["now"])
+        self.assertEqual(
+            later["state"]["last_switch_at"], first["state"]["last_switch_at"]
+        )
+        without_now = decide_from_payload(
+            {key: value for key, value in later_payload.items() if key != "now"}
+        )
+        self.assertNotEqual(
+            without_now["state"]["last_decision_at"], later["state"]["last_decision_at"]
+        )
+
         for invalid_payload in ({}, {"cameras": []}):
             with self.subTest(payload=invalid_payload):
-                with self.assertRaisesRegex(
-                    ValueError, "^at least one camera metric is required$"
-                ):
+                with self.assertRaises(ValueError) as error:
                     decide_from_payload(invalid_payload)
+                self.assertIs(type(error.exception), ValueError)
+                self.assertEqual(
+                    str(error.exception), "at least one camera metric is required"
+                )
 
         with tempfile.TemporaryDirectory() as tmp:
             report = Path(tmp) / "decision_report.json"
