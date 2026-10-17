@@ -6,6 +6,8 @@ import tomllib
 import unittest
 from pathlib import Path
 
+from showmetheplayer import decide_from_payload
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -69,6 +71,50 @@ class CliTests(unittest.TestCase):
         self.assertIn("camera_3", readme)
 
     def test_decide_writes_report_state_and_switch_command(self):
+        payload = json.loads((ROOT / "examples/metrics/round_1.json").read_text())
+        first = decide_from_payload(payload)
+        self.assertEqual(first["decision"]["selected_candidate_id"], "camera_1")
+        self.assertEqual(first["state"]["last_decision_at"], payload["now"])
+
+        payload = {
+            **payload,
+            "state": first["state"],
+            "now": "2026-06-28T12:00:05+00:00",
+        }
+        stateful = decide_from_payload(payload)
+        self.assertEqual(stateful["decision"]["selected_candidate_id"], "camera_1")
+        self.assertEqual(stateful["state"]["last_decision_at"], payload["now"])
+        self.assertEqual(
+            stateful["state"]["last_switch_at"], first["state"]["last_switch_at"]
+        )
+        stateless = decide_from_payload(
+            {key: value for key, value in payload.items() if key != "state"}
+        )
+        self.assertEqual(stateless["decision"]["selected_candidate_id"], "camera_3")
+        self.assertEqual(stateless["state"]["last_switch_at"], payload["now"])
+
+        later_payload = {**payload, "now": "2026-06-28T12:00:10+00:00"}
+        later = decide_from_payload(later_payload)
+        self.assertEqual(later["state"]["last_decision_at"], later_payload["now"])
+        self.assertEqual(
+            later["state"]["last_switch_at"], first["state"]["last_switch_at"]
+        )
+        without_now = decide_from_payload(
+            {key: value for key, value in later_payload.items() if key != "now"}
+        )
+        self.assertNotEqual(
+            without_now["state"]["last_decision_at"], later["state"]["last_decision_at"]
+        )
+
+        for invalid_payload in ({}, {"cameras": []}):
+            with self.subTest(payload=invalid_payload):
+                with self.assertRaises(ValueError) as error:
+                    decide_from_payload(invalid_payload)
+                self.assertIs(type(error.exception), ValueError)
+                self.assertEqual(
+                    str(error.exception), "at least one camera metric is required"
+                )
+
         with tempfile.TemporaryDirectory() as tmp:
             report = Path(tmp) / "decision_report.json"
             state = Path(tmp) / "state.json"

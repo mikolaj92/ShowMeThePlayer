@@ -2,9 +2,11 @@
 
 The input file has:
 
-- `now`: ISO timestamp
+- `now`: optional ISO timestamp
 - `state`: optional previous Splot state; an existing CLI `--state` file replaces it
-- `cameras`: list of camera metrics
+- `cameras`: required nonempty list of camera metrics
+
+Missing or empty `cameras` raises `ValueError("at least one camera metric is required")`.
 
 Without `--state`, or if its file does not exist, the input's `state` is used.
 An existing file replaces that state entirely, including when it contains `{}`.
@@ -37,7 +39,7 @@ Every other camera field is optional and filled with a silent default:
 
 `player_visible` and `available` accept only JSON booleans (`true` or `false`).
 Other values, including strings, numbers, and `null`, raise `TypeError` naming
-the field. Missing flags default to `player_visible=false` and `available=true`.
+the field.
 
 A camera that only has `camera_id` is therefore treated as live
 (`available=true`) with no player in view and full occlusion.
