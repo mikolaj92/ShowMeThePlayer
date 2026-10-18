@@ -24,8 +24,8 @@ those football assumptions into a domain-specific profile is a separate change;
 this host currently documents the boundary rather than implementing that
 profile.
 
-The first switcher is deliberately a dry-run JSON command. Which camera it
-names depends on whether the payload already has a current camera.
+The first switcher emits a dry-run JSON command. This example shows Quick Start
+without an existing state file.
 
 Quick Start uses `examples/metrics/round_1.json`. That file sets
 `state.previous_decision.selected_candidate_id` to `camera_1`. Packed
