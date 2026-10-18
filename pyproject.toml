@@ -25,6 +25,7 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = [
+  "mojo==1.0.0",
   "pytest>=8",
 ]
 
