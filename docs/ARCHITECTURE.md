@@ -19,11 +19,10 @@ the `metric-to-candidate` adapter: they accept player-visibility metrics and zer
 the visibility score when the player is hidden before passing candidates to
 Splot, whose profile constraint applies the minimum-visibility gate.
 
-The first switcher emits a dry-run JSON command. This example shows Quick Start
-without an existing state file.
-
-Quick Start uses `examples/metrics/round_1.json`. That file sets
-`state.previous_decision.selected_candidate_id` to `camera_1`. Packed
+The first switcher emits a dry-run JSON command. Quick Start without an existing
+state file uses `examples/metrics/round_1.json`'s input state, with
+`objective_id=best_player_view` and
+`state.previous_decision.selected_candidate_id=camera_1`. Packed
 hysteresis is `min_improvement = 0.15` with `close_margin = 0.05`; camera_3's
 score margin over the current camera is too small, so Splot keeps
 `camera_1` (`tie_breaker_keep_current`). The host maps Splot

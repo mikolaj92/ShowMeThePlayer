@@ -50,14 +50,13 @@ receives the new state, or `{}` if Splot returns no state.
 
 The `--out` file contains the raw JSON envelope returned by Splot's `fuse_json`,
 including `decision`, `state`, and `evaluations` (requested by this host); it is
-not a generated decision report. With no existing `state.json`, Quick Start's
-`switch_command.json` emits `switch camera_1` with `status=selected`.
+not a generated decision report. With no existing `state.json`, Quick Start uses
+`examples/metrics/round_1.json`'s state and returns `objective_id=best_player_view`.
+`switch_command.json` emits `action=switch`, `camera_id=camera_1`, `status=selected`.
 
-`examples/metrics/round_1.json` already carries `state.previous_decision` for
-`camera_1`. On the first run above, if `state.json` does not exist, that input
-state is used; the next run reads the saved file instead. Packed hysteresis
-(`min_improvement = 0.15`) keeps that camera. The same cameras without
-`previous_decision` switch to `camera_3`.
+The input's `state.previous_decision` names `camera_1`; packed hysteresis
+(`min_improvement = 0.15`) retains that camera. Later runs read the saved state.
+The same cameras without `previous_decision` switch to `camera_3`.
 
 ## Metrics Contract
 
