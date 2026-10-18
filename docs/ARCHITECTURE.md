@@ -6,7 +6,7 @@ ShowMeThePlayer is a host around Splot.
 metrics JSON
   -> showmetheplayer.director.metrics_to_candidates
   -> splot.fuse_json
-  -> decision report
+  -> raw result JSON
   -> switch command
 ```
 
@@ -18,11 +18,6 @@ contract currently appears in `CameraMetric` and
 the `metric-to-candidate` adapter: they accept player-visibility metrics and zero
 the visibility score when the player is hidden before passing candidates to
 Splot, whose profile constraint applies the minimum-visibility gate.
-
-Do not treat this profile as the ShowMeThePlayer domain specification. Moving
-those football assumptions into a domain-specific profile is a separate change;
-this host currently documents the boundary rather than implementing that
-profile.
 
 The first switcher emits a dry-run JSON command. This example shows Quick Start
 without an existing state file.
