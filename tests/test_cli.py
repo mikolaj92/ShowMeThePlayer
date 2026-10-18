@@ -95,10 +95,10 @@ class CliTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("camera=", result.stdout)
-            decision = json.loads(report.read_text())["decision"]
-            self.assertEqual(decision["objective_id"], "best_player_view")
+            self.assertEqual(json.loads(report.read_text())["decision"]["objective_id"], "best_player_view")
             command = json.loads(switch.read_text())
-            self.assertEqual((command["action"], command["camera_id"]), ("switch", "camera_1"))
+            self.assertEqual(command["action"], "switch")
+            self.assertEqual(command["camera_id"], "camera_1")
             self.assertTrue(state.exists())
 
 
