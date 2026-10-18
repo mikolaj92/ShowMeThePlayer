@@ -1,6 +1,9 @@
 import json
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+
+from splot import fuse_json
 
 from showmetheplayer import (
     CameraMetric,
@@ -94,14 +97,23 @@ class DirectorTests(unittest.TestCase):
         self.assertEqual(candidate["payload"]["visibility"], 0.0)
 
     def test_run_director_selects_best_visible_live_camera(self):
-        result = run_director(
-            [
-                CameraMetric("camera_1", True, 0.6, 0.2, 0.7, 0.6),
-                CameraMetric("camera_2", False, 1.0, 0.0, 1.0, 1.0),
-                CameraMetric("camera_3", True, 0.9, 0.1, 0.8, 0.8),
-            ],
-            now="2026-06-28T12:00:04+00:00",
+        payload = json.loads((ROOT / "examples/metrics/round_1.json").read_text(encoding="utf-8"))
+        payload["cameras"][1]["player_visible"] = False
+        payload["state"]["previous_decision"].update(
+            selected_candidate_id="camera_2", selected_candidate_ids=["camera_2"],
+            action={"type": "select", "candidate_id": "camera_2"},
         )
+        with patch("showmetheplayer.director.fuse_json", wraps=fuse_json) as fuse:
+            result = decide_from_payload(payload)
+            fuse.assert_called_once()
+            self.assertEqual(fuse.call_args.args[0]["state"], payload["state"])
+            self.assertEqual(fuse.call_args.args[0]["now"], payload["now"])
+
+            for function, argument in ((decide_from_payload, {}), (decide_from_payload, {"cameras": []}), (run_director, [])):
+                with self.subTest(function=function.__name__, argument=argument):
+                    with self.assertRaisesRegex(ValueError, r"\Aat least one camera metric is required\Z"):
+                        function(argument)
+                    fuse.assert_called_once()
         switch = build_switch_command(result)
 
         self.assertEqual(result["decision"]["selected_candidate_id"], "camera_3")
@@ -114,27 +126,16 @@ class DirectorTests(unittest.TestCase):
     def test_quick_start_payload_keeps_camera_1_without_previous_decision_switches_camera_3(self):
         payload = json.loads((ROOT / "examples/metrics/round_1.json").read_text(encoding="utf-8"))
 
-        with_state = decide_from_payload(payload)
-        with_state_switch = build_switch_command(with_state)
-        self.assertEqual(with_state["decision"]["selected_candidate_id"], "camera_1")
-        self.assertEqual(with_state_switch["camera_id"], "camera_1")
-        self.assertEqual(with_state_switch["action"], "switch")
-        self.assertEqual(with_state_switch["status"], "selected")
-
-        without_previous = {
-            "now": payload["now"],
-            "state": {
-                "session_id": payload["state"]["session_id"],
-                "objective_id": payload["state"]["objective_id"],
-            },
-            "cameras": payload["cameras"],
-        }
-        without_state = decide_from_payload(without_previous)
-        without_state_switch = build_switch_command(without_state)
-        self.assertEqual(without_state["decision"]["selected_candidate_id"], "camera_3")
-        self.assertEqual(without_state_switch["action"], "switch")
-        self.assertEqual(without_state_switch["camera_id"], "camera_3")
-        self.assertEqual(without_state_switch["status"], "selected")
+        for previous, camera in ((True, "camera_1"), (False, "camera_3")):
+            with self.subTest(previous_decision=previous):
+                if not previous:
+                    del payload["state"]["previous_decision"]
+                result = decide_from_payload(payload)
+                switch = build_switch_command(result)
+                self.assertEqual(result["decision"]["selected_candidate_id"], camera)
+                self.assertEqual(switch["camera_id"], camera)
+                self.assertEqual(switch["action"], "switch")
+                self.assertEqual(switch["status"], "selected")
 
 
 if __name__ == "__main__":

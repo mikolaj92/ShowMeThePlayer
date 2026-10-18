@@ -62,25 +62,7 @@ state is used; the next run reads the saved file instead. Packed hysteresis
 
 ## Metrics Contract
 
-Each camera metric is one candidate:
-
-```json
-{
-  "camera_id": "camera_3",
-  "player_visible": true,
-  "visibility": 0.91,
-  "occlusion": 0.12,
-  "sharpness": 0.78,
-  "face_angle": 0.64,
-  "available": true
-}
-```
-
-Splot handles scoring, constraints, keep-current behavior, hysteresis and
-cooldown. ShowMeThePlayer builds Splot candidates, forwards `player_visible`,
-sets candidate `visibility` to `0.0` when that flag is false, and turns the
-decision into a switch command. See the [metrics contract](docs/METRICS.md)
-for the profile's independent visibility threshold.
+See the [metrics contract](docs/METRICS.md) for required fields, defaults, errors, and selection behavior.
 
 ## Boundary
 
