@@ -102,8 +102,8 @@ class DirectorTests(unittest.TestCase):
             "state": {
                 "session_id": "session_director",
                 "objective_id": "best_player_view",
-                "last_decision_at": "2026-06-28T12:00:00+00:00",
-                "last_switch_at": "2026-06-28T11:59:57+00:00",
+                "last_decision_at": "2026-06-28T11:59:00+00:00",
+                "last_switch_at": "2026-06-28T11:59:00+00:00",
                 "previous_decision": {
                     "id": "decision_previous_camera",
                     "status": "selected",
@@ -124,27 +124,30 @@ class DirectorTests(unittest.TestCase):
             ],
         }
         with patch("showmetheplayer.director.fuse_json", wraps=fuse_json) as fuse:
+            result = decide_from_payload(payload)
+            fuse.assert_called_once()
+            request = fuse.call_args.args[0]
+            self.assertEqual(request["state"], payload["state"])
+            self.assertEqual(request["now"], payload["now"])
+
             for invalid in ({}, {"cameras": []}):
                 with self.subTest(payload=invalid):
                     with self.assertRaisesRegex(
                         ValueError, r"\Aat least one camera metric is required\Z"
                     ):
                         decide_from_payload(invalid)
-            with self.assertRaisesRegex(
-                ValueError, r"\Aat least one camera metric is required\Z"
-            ):
-                run_director([])
-            fuse.assert_not_called()
-
-            result = decide_from_payload(payload)
-            fuse.assert_called_once()
-            request = fuse.call_args.args[0]
-            self.assertEqual(request["state"], payload["state"])
-            self.assertEqual(request["now"], payload["now"])
+                    fuse.assert_called_once()
+            with self.subTest(metrics=[]):
+                with self.assertRaisesRegex(
+                    ValueError, r"\Aat least one camera metric is required\Z"
+                ):
+                    run_director([])
+                fuse.assert_called_once()
         switch = build_switch_command(result)
 
         self.assertEqual(result["decision"]["selected_candidate_id"], "camera_3")
         self.assertEqual(switch["action"], "switch")
+        self.assertEqual(switch["camera_id"], "camera_3")
         evaluations = result["evaluations"]
         self.assertTrue(
             any(item["candidate_id"] == "camera_2" and not item.get("eligible", True) for item in evaluations)

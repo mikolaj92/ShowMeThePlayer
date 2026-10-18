@@ -62,8 +62,7 @@ state is used; the next run reads the saved file instead. Packed hysteresis
 
 ## Metrics Contract
 
-See the [metrics contract](docs/METRICS.md) for the input payload, camera
-field defaults, visibility threshold, and selection behavior.
+See the [metrics contract](docs/METRICS.md) for required fields, defaults, errors, and selection behavior.
 
 ## Boundary
 
