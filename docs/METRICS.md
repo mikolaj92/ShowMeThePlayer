@@ -20,12 +20,8 @@ threshold, the packed profile uses `when_constraints_block_all = "fallback"`,
 and the host emits `action: fallback` instead. This also applies when cameras
 supply only the required `camera_id`, since their visibility defaults to zero.
 
-Required per camera:
-
-- `camera_id`
-
-`CameraMetric.from_dict` raises `KeyError` only when `camera_id` is missing.
-Every other camera field is optional and filled with a silent default:
+`CameraMetric.from_dict` requires only `camera_id`; omitting it raises `KeyError`.
+All other camera fields are optional, with these defaults:
 
 - `player_visible`: `false`
 - `visibility`: `0`
