@@ -53,12 +53,12 @@ including `decision`, `state`, and `evaluations` (requested by this host); it is
 not a generated decision report. `switch_command.json` is a small dry-run command
 that an actual switcher adapter can consume later.
 
-`examples/metrics/round_1.json` already carries `state.previous_decision` for
-`camera_1`. On the first run above, if `state.json` does not exist, that input
-state is used; the next run reads the saved file instead. Packed hysteresis
-(`min_improvement = 0.15`) keeps that camera:
-`switch camera=camera_1 status=selected`. The same cameras without
-`previous_decision` switch to `camera_3`.
+For a fresh run, use output paths that do not exist yet. The example carries
+`state.previous_decision` for `camera_1`; a missing `state.json` preserves it.
+The expected command is `switch camera=camera_1 status=selected`: Splot retains
+that camera, but the host maps `selected` to `action=switch`, even when the
+camera ID is unchanged. Only `kept_previous` with a camera ID maps to `keep`.
+Later runs with the same `--state` path use the saved state instead.
 
 ## Metrics Contract
 
