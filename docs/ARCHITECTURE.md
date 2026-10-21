@@ -24,14 +24,14 @@ those football assumptions into a domain-specific profile is a separate change;
 this host currently documents the boundary rather than implementing that
 profile.
 
-Quick Start uses `examples/metrics/round_1.json` with fresh output paths,
-including a missing `state.json`, so it uses the input's
-`state.previous_decision.selected_candidate_id` of `camera_1`. Packed
-hysteresis is `min_improvement = 0.15` with `close_margin = 0.05`; camera_3's
-score margin over the current camera is too small, so Splot keeps
-`camera_1` (`tie_breaker_keep_current`). The expected dry-run command below has
-`action=switch` because the host maps `status=selected` to `switch`, even when
-the camera ID is unchanged; only `kept_previous` with a camera ID maps to `keep`:
+Quick Start uses `examples/metrics/round_1.json` and creates a fresh directory
+with `output_dir=$(mktemp -d ./.quick-start.XXXXXX)`. Its
+`--state "$output_dir/state.json"` file does not exist, preserving the input's
+`state.previous_decision.selected_candidate_id` of `camera_1`. Packed hysteresis
+(`min_improvement = 0.15`, `close_margin = 0.05`) retains `camera_1` with reason
+`tie_breaker_keep_current`. The expected `$output_dir/switch_command.json`
+below has `action=switch` because `status=selected` maps to `switch` with a
+camera ID; this command does not necessarily mean the camera changed:
 
 ```json
 {

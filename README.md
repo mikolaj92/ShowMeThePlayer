@@ -21,12 +21,12 @@ PyPI's unrelated `splot` package will not work here.
 
 ```bash
 uv sync
-
+output_dir=$(mktemp -d ./.quick-start.XXXXXX)
 uv run showmetheplayer decide \
   --input examples/metrics/round_1.json \
-  --out decision_report.json \
-  --state state.json \
-  --switch-out switch_command.json
+  --out "$output_dir/decision_report.json" \
+  --state "$output_dir/state.json" \
+  --switch-out "$output_dir/switch_command.json"
 
 uv run --extra dev pytest -q
 ```
@@ -53,12 +53,12 @@ including `decision`, `state`, and `evaluations` (requested by this host); it is
 not a generated decision report. `switch_command.json` is a small dry-run command
 that an actual switcher adapter can consume later.
 
-For a fresh run, use output paths that do not exist yet. The example carries
-`state.previous_decision` for `camera_1`; a missing `state.json` preserves it.
-The expected command is `switch camera=camera_1 status=selected`: Splot retains
-that camera, but the host maps `selected` to `action=switch`, even when the
-camera ID is unchanged. Only `kept_previous` with a camera ID maps to `keep`.
-Later runs with the same `--state` path use the saved state instead.
+The fresh directory ensures that `$output_dir/state.json` does not exist, so
+`state.previous_decision` from the input still identifies `camera_1`.
+The expected dry-run command has `action=switch`, `camera_id=camera_1`, and
+`status=selected`. With a camera ID, `selected` or `routed` maps to `switch`,
+not necessarily a camera change; only `kept_previous` maps to `keep`.
+Reusing the same `--state` path uses the saved state instead.
 
 ## Metrics Contract
 
