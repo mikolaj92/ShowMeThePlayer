@@ -24,14 +24,14 @@ those football assumptions into a domain-specific profile is a separate change;
 this host currently documents the boundary rather than implementing that
 profile.
 
-Quick Start uses `examples/metrics/round_1.json` and creates a fresh directory
-with `output_dir=$(mktemp -d ./.quick-start.XXXXXX)`. Its
-`--state "$output_dir/state.json"` file does not exist, preserving the input's
-`state.previous_decision.selected_candidate_id` of `camera_1`. Packed hysteresis
-(`min_improvement = 0.15`, `close_margin = 0.05`) retains `camera_1` with reason
-`tie_breaker_keep_current`. The expected `$output_dir/switch_command.json`
-below has `action=switch` because `status=selected` maps to `switch` with a
-camera ID; this command does not necessarily mean the camera changed:
+The [Quick Start](../README.md#quick-start) uses `examples/metrics/round_1.json`
+and `output_dir=$(mktemp -d ./.quick-start.XXXXXX)`. The missing
+`--state "$output_dir/state.json"` preserves the input's
+`state.previous_decision.selected_candidate_id=camera_1`. Packed hysteresis
+(`min_improvement = 0.15`, `close_margin = 0.05`) retains that camera with reason
+`tie_breaker_keep_current`. The expected `--switch-out` file
+`$output_dir/switch_command.json` below has `action=switch` and `status=selected`:
+`switch` can select the current camera; it does not imply a camera change.
 
 ```json
 {

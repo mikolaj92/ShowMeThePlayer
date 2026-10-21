@@ -53,12 +53,12 @@ including `decision`, `state`, and `evaluations` (requested by this host); it is
 not a generated decision report. `switch_command.json` is a small dry-run command
 that an actual switcher adapter can consume later.
 
-The fresh directory ensures that `$output_dir/state.json` does not exist, so
-`state.previous_decision` from the input still identifies `camera_1`.
-The expected dry-run command has `action=switch`, `camera_id=camera_1`, and
-`status=selected`. With a camera ID, `selected` or `routed` maps to `switch`,
-not necessarily a camera change; only `kept_previous` maps to `keep`.
-Reusing the same `--state` path uses the saved state instead.
+The fresh directory leaves `--state` missing, preserving the input's
+`state.previous_decision.selected_candidate_id=camera_1`. The expected dry-run
+command has `action=switch`, `camera_id=camera_1`, and `status=selected`.
+With a camera ID, `selected` or `routed` maps to `switch`, even when selecting
+the current camera; `kept_previous` maps to `keep`. Reusing the same `--state`
+path uses the saved state instead.
 
 ## Metrics Contract
 
