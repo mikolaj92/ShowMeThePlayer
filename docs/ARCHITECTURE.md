@@ -25,8 +25,8 @@ this host currently documents the boundary rather than implementing that
 profile.
 
 The [Quick Start](../README.md#quick-start) uses `examples/metrics/round_1.json`
-and `output_dir=$(mktemp -d ./.quick-start.XXXXXX)`. The missing
-`--state "$output_dir/state.json"` preserves the input's
+and `output_dir=$(mktemp -d ./.quick-start.XXXXXX)`. The command passes
+`--state "$output_dir/state.json"`; this file does not yet exist, preserving the input's
 `state.previous_decision.selected_candidate_id=camera_1`. Packed hysteresis
 (`min_improvement = 0.15`, `close_margin = 0.05`) retains that camera with reason
 `tie_breaker_keep_current`. The expected `--switch-out` file
