@@ -15,18 +15,18 @@ camera streams -> tracker metrics -> ShowMeThePlayer -> Splot -> switch command
 ## Quick Start
 
 Splot is pulled from its immutable GitHub tag `v0.4.1`. No sibling clone is
-required. Splot 0.4 is a thin binding to its Mojo engine, so the Modular Mojo
-toolchain must be available on `PATH` (or through the Splot build environment).
-PyPI's unrelated `splot` package will not work here.
+required. `uv sync` installs the matching Mojo 1.0.0 toolchain in `.venv`;
+`uv run` makes it available to Splot. Compilation needs a C linker (macOS:
+`xcode-select --install`; Ubuntu/Debian: `sudo apt install gcc`).
 
 ```bash
-uv sync
-output_dir=$(mktemp -d ./.quick-start.XXXXXX)
+uv sync --locked
+
 uv run showmetheplayer decide \
   --input examples/metrics/round_1.json \
-  --out "$output_dir/decision_report.json" \
-  --state "$output_dir/state.json" \
-  --switch-out "$output_dir/switch_command.json"
+  --out decision_report.json \
+  --state state.json \
+  --switch-out switch_command.json
 
 uv run --extra dev pytest -q
 ```
@@ -53,12 +53,12 @@ including `decision`, `state`, and `evaluations` (requested by this host); it is
 not a generated decision report. `switch_command.json` is a small dry-run command
 that an actual switcher adapter can consume later.
 
-The fresh directory has no state file yet, preserving the input's
-`state.previous_decision.selected_candidate_id=camera_1`. The expected dry-run
-command has `action=switch`, `camera_id=camera_1`, and `status=selected`.
-With a truthy camera ID, `selected` or `routed` maps to `switch`, even for the
-current camera; only `kept_previous` maps to `keep`. A `switch` command does not
-imply a camera change. Reusing the same `--state` path uses the saved state.
+`examples/metrics/round_1.json` already carries `state.previous_decision` for
+`camera_1`. On the first run above, if `state.json` does not exist, that input
+state is used; the next run reads the saved file instead. Packed hysteresis
+(`min_improvement = 0.15`) keeps that camera:
+`switch camera=camera_1 status=selected`. The same cameras without
+`previous_decision` switch to `camera_3`.
 
 ## Metrics Contract
 

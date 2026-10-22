@@ -24,14 +24,15 @@ those football assumptions into a domain-specific profile is a separate change;
 this host currently documents the boundary rather than implementing that
 profile.
 
-The [Quick Start](../README.md#quick-start) uses `examples/metrics/round_1.json`
-and `output_dir=$(mktemp -d ./.quick-start.XXXXXX)`. The command passes
-`--state "$output_dir/state.json"`; this file does not yet exist, preserving the input's
-`state.previous_decision.selected_candidate_id=camera_1`. Packed hysteresis
-(`min_improvement = 0.15`, `close_margin = 0.05`) retains that camera with reason
-`tie_breaker_keep_current`. The expected `--switch-out` file
-`$output_dir/switch_command.json` below has `action=switch` and `status=selected`:
-`switch` can select the current camera; it does not imply a camera change.
+The first switcher is deliberately a dry-run JSON command. Which camera it
+names depends on whether the payload already has a current camera.
+
+Quick Start uses `examples/metrics/round_1.json`. That file sets
+`state.previous_decision.selected_candidate_id` to `camera_1`. Packed
+hysteresis is `min_improvement = 0.15` with `close_margin = 0.05`; camera_3's
+score margin over the current camera is too small, so Splot keeps
+`camera_1` (`tie_breaker_keep_current`). The host maps Splot
+`status=selected` to `action=switch` (`kept_previous` would map to `keep`):
 
 ```json
 {
@@ -60,7 +61,7 @@ above are not a closed list.
 
 The same cameras without `previous_decision` have no current camera to keep.
 Because at least one camera in this example is eligible, Splot selects the
-highest eligible score and the host emits a dry-run switch to `camera_3`:
+highest eligible score and the host emits a real switch to `camera_3`:
 
 ```json
 {
