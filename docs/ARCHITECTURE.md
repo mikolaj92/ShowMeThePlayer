@@ -24,15 +24,25 @@ those football assumptions into a domain-specific profile is a separate change;
 this host currently documents the boundary rather than implementing that
 profile.
 
-The first switcher is deliberately a dry-run JSON command. Which camera it
-names depends on whether the payload already has a current camera.
+The first switcher is a dry-run JSON command, not proof of a camera change.
+Quick Start runs with fresh output paths, so no saved state overrides the input:
 
-Quick Start uses `examples/metrics/round_1.json`. That file sets
+```bash
+demo_dir=$(mktemp -d ./quick-start.XXXXXX)
+uv run showmetheplayer decide \
+  --input examples/metrics/round_1.json \
+  --out "$demo_dir/decision_report.json" \
+  --state "$demo_dir/state.json" \
+  --switch-out "$demo_dir/switch_command.json"
+```
+
+`examples/metrics/round_1.json` sets
 `state.previous_decision.selected_candidate_id` to `camera_1`. Packed
 hysteresis is `min_improvement = 0.15` with `close_margin = 0.05`; camera_3's
 score margin over the current camera is too small, so Splot keeps
-`camera_1` (`tie_breaker_keep_current`). The host maps Splot
-`status=selected` to `action=switch` (`kept_previous` would map to `keep`):
+`camera_1` (`tie_breaker_keep_current`). The verified output is
+`switch camera=camera_1 status=selected confidence=0.796`. The host maps
+`status=selected` to `action=switch` even though the camera stays the same:
 
 ```json
 {
@@ -59,24 +69,10 @@ From the report's `decision`, `camera_id` comes from `selected_candidate_id`,
 `str(value or "")`, defaulting to `""` when missing, null, or empty. The statuses
 above are not a closed list.
 
-The same cameras without `previous_decision` have no current camera to keep.
-Because at least one camera in this example is eligible, Splot selects the
-highest eligible score and the host emits a real switch to `camera_3`:
-
-```json
-{
-  "action": "switch",
-  "camera_id": "camera_3",
-  "decision_id": "decision_mojo",
-  "status": "selected",
-  "confidence": 0.8179999999999998,
-  "reason": "constrained_weighted_score_selected_highest_score"
-}
-```
-
-This stateless example does not guarantee a switch for every payload. If all
-cameras are unavailable or below the visibility threshold, the packed profile
-returns `fallback` and the host emits `action=fallback` instead; see
+`switch` describes the mapped status, not a comparison with the current camera.
+Only `kept_previous` with a camera ID produces `keep`. If all cameras are
+unavailable or below the visibility threshold, the packed profile returns
+`fallback` and the host emits `action=fallback` instead; see
 [Metrics](METRICS.md).
 
 Real adapters can map this to OBS, vMix, ATEM, FFmpeg, or another router.

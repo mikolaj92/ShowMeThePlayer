@@ -22,11 +22,12 @@ required. `uv sync` installs the matching Mojo 1.0.0 toolchain in `.venv`;
 ```bash
 uv sync --locked
 
+demo_dir=$(mktemp -d ./quick-start.XXXXXX)
 uv run showmetheplayer decide \
   --input examples/metrics/round_1.json \
-  --out decision_report.json \
-  --state state.json \
-  --switch-out switch_command.json
+  --out "$demo_dir/decision_report.json" \
+  --state "$demo_dir/state.json" \
+  --switch-out "$demo_dir/switch_command.json"
 
 uv run --extra dev pytest -q
 ```
@@ -50,15 +51,14 @@ receives the new state, or `{}` if Splot returns no state.
 
 The `--out` file contains the raw JSON envelope returned by Splot's `fuse_json`,
 including `decision`, `state`, and `evaluations` (requested by this host); it is
-not a generated decision report. `switch_command.json` is a small dry-run command
-that an actual switcher adapter can consume later.
+not a generated decision report. `switch_command.json` is a dry-run command for a future switcher adapter.
 
-`examples/metrics/round_1.json` already carries `state.previous_decision` for
-`camera_1`. On the first run above, if `state.json` does not exist, that input
-state is used; the next run reads the saved file instead. Packed hysteresis
-(`min_improvement = 0.15`) keeps that camera:
-`switch camera=camera_1 status=selected`. The same cameras without
-`previous_decision` switch to `camera_3`.
+The fresh output directory leaves `state.json` absent, so the demo uses the
+input's `state.previous_decision` for `camera_1`. It prints
+`switch camera=camera_1 status=selected confidence=0.796` and writes
+`action=switch`, `camera_id=camera_1`. The camera stays the same: the host maps
+`selected` or `routed` with a camera ID to `switch`, not a guaranteed camera
+change. Only `kept_previous` with a camera ID maps to `keep`.
 
 ## Metrics Contract
 
