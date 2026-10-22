@@ -1,6 +1,7 @@
 import json
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from showmetheplayer import (
     CameraMetric,
@@ -9,6 +10,7 @@ from showmetheplayer import (
     metric_to_candidate,
     run_director,
 )
+from showmetheplayer.director import fuse_json
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -114,21 +116,19 @@ class DirectorTests(unittest.TestCase):
     def test_quick_start_payload_keeps_camera_1_without_previous_decision_switches_camera_3(self):
         payload = json.loads((ROOT / "examples/metrics/round_1.json").read_text(encoding="utf-8"))
 
-        with_state = decide_from_payload(payload)
+        with patch("showmetheplayer.director.fuse_json", wraps=fuse_json) as fuse:
+            with_state = decide_from_payload(payload)
+        self.assertEqual(fuse.call_args.args[0]["state"], payload["state"])
+        self.assertEqual(fuse.call_args.args[0]["now"], payload["now"])
         with_state_switch = build_switch_command(with_state)
         self.assertEqual(with_state["decision"]["selected_candidate_id"], "camera_1")
         self.assertEqual(with_state_switch["camera_id"], "camera_1")
         self.assertEqual(with_state_switch["action"], "switch")
         self.assertEqual(with_state_switch["status"], "selected")
 
-        without_previous = {
-            "now": payload["now"],
-            "state": {
-                "session_id": payload["state"]["session_id"],
-                "objective_id": payload["state"]["objective_id"],
-            },
-            "cameras": payload["cameras"],
-        }
+        without_previous = dict(
+            payload, state={"session_id": payload["state"]["session_id"], "objective_id": payload["state"]["objective_id"]}
+        )
         without_state = decide_from_payload(without_previous)
         without_state_switch = build_switch_command(without_state)
         self.assertEqual(without_state["decision"]["selected_candidate_id"], "camera_3")
