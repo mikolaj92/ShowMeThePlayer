@@ -15,12 +15,12 @@ camera streams -> tracker metrics -> ShowMeThePlayer -> Splot -> switch command
 ## Quick Start
 
 Splot is pulled from its immutable GitHub tag `v0.4.1`. No sibling clone is
-required. Splot 0.4 is a thin binding to its Mojo engine, so the Modular Mojo
-toolchain must be available on `PATH` (or through the Splot build environment).
-PyPI's unrelated `splot` package will not work here.
+required. `uv sync` installs the matching Mojo 1.0.0 toolchain in `.venv`;
+`uv run` makes it available to Splot. Compilation needs a C linker (macOS:
+`xcode-select --install`; Ubuntu/Debian: `sudo apt install gcc`).
 
 ```bash
-uv sync
+uv sync --locked
 
 uv run showmetheplayer decide \
   --input examples/metrics/round_1.json \
