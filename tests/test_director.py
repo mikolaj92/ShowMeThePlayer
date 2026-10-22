@@ -57,8 +57,8 @@ class DirectorTests(unittest.TestCase):
         self.assertIsNone(metric.observed_at)
 
     def test_from_dict_raises_without_camera_id(self):
-        with self.assertRaises(KeyError):
-            CameraMetric.from_dict({"player_visible": True})
+        for call, argument, error, message in ((CameraMetric.from_dict, {"player_visible": True}, KeyError, "^'camera_id'$"), (decide_from_payload, {"cameras": []}, ValueError, "^at least one camera metric is required$"), (decide_from_payload, {}, ValueError, "^at least one camera metric is required$"), (run_director, [], ValueError, "^at least one camera metric is required$")):
+            with self.assertRaisesRegex(error, message): call(argument)
 
     def test_from_dict_ignores_unscored_leftover_fields(self):
         candidate = metric_to_candidate(
