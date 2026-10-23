@@ -56,9 +56,9 @@ not a generated decision report. `switch_command.json` is a dry-run command for 
 The fresh output directory leaves `state.json` absent, so the demo uses the
 input's `state.previous_decision` for `camera_1`. It prints
 `switch camera=camera_1 status=selected confidence=0.796` and writes
-`action=switch`, `camera_id=camera_1`. The camera stays the same: the host maps
-`selected` or `routed` with a camera ID to `switch`, not a guaranteed camera
-change. Only `kept_previous` with a camera ID maps to `keep`.
+`action=switch`, `camera_id=camera_1`, not `camera_3`. The host maps `selected`
+or `routed` with a camera ID to `switch`, even when that camera is already current.
+Only `kept_previous` with a camera ID maps to `keep`; see [Architecture](docs/ARCHITECTURE.md).
 
 ## Metrics Contract
 

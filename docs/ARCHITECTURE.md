@@ -10,19 +10,10 @@ metrics JSON
   -> switch command
 ```
 
-Splot remains the generic arbiter. The packaged `profile.toml` is currently a
-generic/demo policy, not a football-pitch profile: its Polish language, generic
-`best_player_view` description, and three `camera_*` waves describe the fixture
-shape rather than pitch roles or camera placement. The football-specific input
-contract currently appears in `CameraMetric` and
-the `metric-to-candidate` adapter: they accept player-visibility metrics and zero
-the visibility score when the player is hidden before passing candidates to
-Splot, whose profile constraint applies the minimum-visibility gate.
-
-Do not treat this profile as the ShowMeThePlayer domain specification. Moving
-those football assumptions into a domain-specific profile is a separate change;
-this host currently documents the boundary rather than implementing that
-profile.
+Splot is the generic arbiter; `profile.toml` is a demo policy, not a pitch specification.
+`best_player_view` and the `camera_*` waves describe fixtures, not pitch roles or placement.
+`CameraMetric` and the adapter zero visibility for hidden players; Splot applies
+the minimum-visibility gate. A domain-specific profile is a separate change.
 
 The first switcher is a dry-run JSON command, not proof of a camera change.
 Quick Start runs with fresh output paths, so no saved state overrides the input:
@@ -55,12 +46,25 @@ score margin over the current camera is too small, so Splot keeps
 }
 ```
 
+With an existing `--state` file containing `{}`, input state is replaced;
+at least one camera in this example is eligible, so the stateless result is:
+
+```json
+{
+  "action": "switch",
+  "camera_id": "camera_3",
+  "decision_id": "decision_mojo",
+  "status": "selected",
+  "confidence": 0.8179999999999998,
+  "reason": "constrained_weighted_score_selected_highest_score"
+}
+```
+
 `build_switch_command` requires a dictionary at `result["decision"]`; a missing,
 null, or non-dictionary value raises `TypeError`. A truthy
-`selected_candidate_id` is required for `keep` (`kept_previous`) and `switch`
-(`selected` or `routed`); otherwise, these statuses produce `wait`. `fallback`
-produces `fallback` with or without an identifier; all other statuses produce
-`wait`.
+`selected_candidate_id` maps `kept_previous` to `keep`, and `selected` or `routed`
+to `switch`, without comparing cameras. `fallback` maps to `action=fallback`
+with or without an ID; other cases produce `wait`.
 
 From the report's `decision`, `camera_id` comes from `selected_candidate_id`,
 `decision_id` from `id`, and `reason` from `policy_reason`; each may be `null`.
@@ -69,10 +73,6 @@ From the report's `decision`, `camera_id` comes from `selected_candidate_id`,
 `str(value or "")`, defaulting to `""` when missing, null, or empty. The statuses
 above are not a closed list.
 
-`switch` describes the mapped status, not a comparison with the current camera.
-Only `kept_previous` with a camera ID produces `keep`. If all cameras are
-unavailable or below the visibility threshold, the packed profile returns
-`fallback` and the host emits `action=fallback` instead; see
-[Metrics](METRICS.md).
-
-Real adapters can map this to OBS, vMix, ATEM, FFmpeg, or another router.
+If all cameras are unavailable or below the visibility threshold, the profile
+returns `fallback`; see [Metrics](METRICS.md). Adapters can send commands to
+OBS, vMix, ATEM, FFmpeg, or another router.
