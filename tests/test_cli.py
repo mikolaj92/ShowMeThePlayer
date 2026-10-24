@@ -69,37 +69,37 @@ class CliTests(unittest.TestCase):
         self.assertIn("camera_3", readme)
 
     def test_decide_writes_report_state_and_switch_command(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            report = Path(tmp) / "decision_report.json"
-            state = Path(tmp) / "state.json"
-            switch = Path(tmp) / "switch_command.json"
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    "-m",
-                    "showmetheplayer.cli",
-                    "decide",
-                    "--input",
-                    "examples/metrics/round_1.json",
-                    "--out",
-                    str(report),
-                    "--state",
-                    str(state),
-                    "--switch-out",
-                    str(switch),
-                ],
-                cwd=ROOT,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
+        for initial_state, camera in ((None, "camera_1"), ("{}", "camera_3")):
+            with self.subTest(initial_state=initial_state), tempfile.TemporaryDirectory() as tmp:
+                report = Path(tmp) / "decision_report.json"
+                state = Path(tmp) / "state.json"
+                switch = Path(tmp) / "switch_command.json"
+                if initial_state is not None:
+                    state.write_text(initial_state)
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        "-m",
+                        "showmetheplayer.cli",
+                        "decide",
+                        "--input",
+                        "examples/metrics/round_1.json",
+                        "--out", str(report),
+                        "--state", str(state),
+                        "--switch-out", str(switch),
+                    ],
+                    cwd=ROOT,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
 
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn("camera=", result.stdout)
-            decision = json.loads(report.read_text())["decision"]
-            self.assertEqual(decision["objective_id"], "best_player_view")
-            self.assertEqual(tuple(json.loads(switch.read_text())[key] for key in ("action", "camera_id")), ("switch", "camera_1"))
-            self.assertTrue(state.exists())
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(f"switch camera={camera} status=selected", result.stdout)
+                decision = json.loads(report.read_text())["decision"]
+                self.assertEqual(decision["objective_id"], "best_player_view")
+                self.assertEqual(tuple(json.loads(switch.read_text())[key] for key in ("action", "camera_id")), ("switch", camera))
+                self.assertTrue(state.exists())
 
 
 if __name__ == "__main__":
