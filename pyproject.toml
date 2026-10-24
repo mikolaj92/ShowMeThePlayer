@@ -9,6 +9,7 @@ authors = [
   { name = "mikolaj92" }
 ]
 dependencies = [
+  "mojo==1.0.0",
   # PyPI's `splot` is an unrelated PySAL package. Pin the immutable Mojo-backed
   # mikolaj92/splot binding; no sibling checkout or floating branch is allowed.
   "splot @ git+https://github.com/mikolaj92/splot.git@v0.4.1",

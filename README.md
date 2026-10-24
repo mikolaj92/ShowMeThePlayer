@@ -15,18 +15,19 @@ camera streams -> tracker metrics -> ShowMeThePlayer -> Splot -> switch command
 ## Quick Start
 
 Splot is pulled from its immutable GitHub tag `v0.4.1`. No sibling clone is
-required. Splot 0.4 is a thin binding to its Mojo engine, so the Modular Mojo
-toolchain must be available on `PATH` (or through the Splot build environment).
-PyPI's unrelated `splot` package will not work here.
+required. `uv sync` installs the matching Mojo 1.0.0 toolchain in `.venv`;
+`uv run` makes it available to Splot. Compilation needs a C linker (macOS:
+`xcode-select --install`; Ubuntu/Debian: `sudo apt install gcc`).
 
 ```bash
-uv sync
+uv sync --locked
 
+demo_dir=$(mktemp -d ./quick-start.XXXXXX)
 uv run showmetheplayer decide \
   --input examples/metrics/round_1.json \
-  --out decision_report.json \
-  --state state.json \
-  --switch-out switch_command.json
+  --out "$demo_dir/decision_report.json" \
+  --state "$demo_dir/state.json" \
+  --switch-out "$demo_dir/switch_command.json"
 
 uv run --extra dev pytest -q
 ```
@@ -50,13 +51,14 @@ receives the new state, or `{}` if Splot returns no state.
 
 The `--out` file contains the raw JSON envelope returned by Splot's `fuse_json`,
 including `decision`, `state`, and `evaluations` (requested by this host); it is
-not a generated decision report. With no existing `state.json`, Quick Start uses
-`examples/metrics/round_1.json`'s state and returns `objective_id=best_player_view`.
-`switch_command.json` emits `action=switch`, `camera_id=camera_1`, `status=selected`.
+not a generated decision report. `switch_command.json` is a dry-run command for a future switcher adapter.
 
-The input's `state.previous_decision` names `camera_1`; packed hysteresis
-(`min_improvement = 0.15`) retains that camera. Later runs read the saved state.
-The same cameras without `previous_decision` switch to `camera_3`.
+The fresh output directory leaves `state.json` absent, so the demo uses the
+input's `state.previous_decision` for `camera_1`. It prints
+`switch camera=camera_1 status=selected confidence=0.796` and writes
+`action=switch`, `camera_id=camera_1`, not `camera_3`. The host maps `selected`
+or `routed` with a camera ID to `switch`, even when that camera is already current.
+Only `kept_previous` with a camera ID maps to `keep`; see [Architecture](docs/ARCHITECTURE.md).
 
 ## Metrics Contract
 
